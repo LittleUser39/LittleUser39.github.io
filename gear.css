@@ -1,68 +1,71 @@
-
-.grid-container {
-  display: grid;
-  grid-template-columns: auto auto auto;
-  grid-gap: 1mm;
-  padding: 1mm;
+body {
+  background: #fff;
 }
 
-
-input[type=text], select {
-  width: 100%;
-  padding: 3mm 4mm;
-  margin: 1mm 0;
-  display: inline-block;
-  border: 0.3mm solid #ccc;
-  border-radius: 1mm;
-  box-sizing: border-box;
+.container {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  margin: 40px;
 }
 
-input[type=number], select {
-  width: 100%;
-  padding: 3mm 4mm;
-  margin: 1mm 0;
-  display: inline-block;
-  border: 0.3mm solid #ccc;
-  border-radius: 1mm;
-  box-sizing: border-box;
+.left-column, .right-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.grid-label {
-  text-align: center;
+.small-box.top {
+  width: 260px;
+  height: 44px;
+  border: 3px solid #111;
+  margin-bottom: 24px;
 }
 
-.grid-result {
-  font-size: 300%;
-  text-align: center;
-  font-weight: bold;
+.big-vertical-box {
+  width: 320px;
+  height: 410px;
+  border: 4px solid #111;
+  margin-bottom: 30px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 50px;
 }
 
-.grid-line {
-  text-align: center;
-  grid-column: 1 / span 3;
+.middle-box {
+  width: 220px;
+  height: 46px;
+  border: 3px solid #111;
+  margin-bottom: 20px;
 }
 
-.grid-last-two {
-  grid-column: 2 / span 2;
+.small-horizontal-box {
+  width: 183px;
+  height: 32px;
+  border: 3px solid #111;
+  margin-bottom: 10px;
 }
 
-.grid-error {
-  grid-column: 1 / span 3;
-  min-height: 5em;
-  font-size: 100%;
-  font-weight: bold;
-  border-color: WhiteSmoke;
-  border-style: groove;
+.bottom-box {
+  width: 220px;
+  height: 70px;
+  border: 3px solid #111;
+  margin-top: 28px;
 }
 
-.button {
-  background-color: #4CAF50;
-  border: none;
-  color: white;
-  padding: 3mm 4mm;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  margin: 1mm 0;
-  cursor: pointer;
+.right-column .big-vertical-box {
+  width: 340px;
+  height: 410px;
+}
+
+.right-column .bottom-box.right {
+  width: 226px;
+  height: 60px;
+  border-style: dashed;
+  border-width: 3px;
+  border-color: #111;
+  margin-top: 35px;
 }
