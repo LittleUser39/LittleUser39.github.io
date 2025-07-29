@@ -1,155 +1,282 @@
-<div class="left-bigbox">
-  <!-- 기존 고정 셀렉트 박스 -->
-  <div class="option-row">
-    <label for="gear-lv">장비 레벨</label>
-    <select id="gear-lv" name="gear-lv" onchange="resetplaceholder()">
-      <option id="lv85" value="lv85" selected>Lv85</option>
-      <option id="lv88" value="lv88">Lv88</option>
-      <option id="lv90r" value="lv90r">Lv90 재련</option>
-    </select>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>에픽세븐 장비 계산기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    .container {
+      display: flex;
+      gap: 40px;
+      margin: 40px;
+      align-items: flex-start;
+    }
+    .button-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .btn-square {
+      width: 120px;
+      height: 40px;
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .left-bigbox {
+      width: 280px;
+      min-height: 420px;
+      border: 2px solid #222;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: #fafafa;
+    }
+    .option-row {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 6px;
+    }
+    .option-row label {
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .option-row select,
+    .option-row input[type=number] {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1.5px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      margin-bottom: 2px;
+    }
+    .right-bigbox {
+      width: 220px;
+      min-height: 270px;
+      border: 2px solid #333;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      padding: 20px;
+      gap: 18px;
+      background: #fff;
+      color: #222;
+    }
+    #score {
+      font-size: 48px;
+      font-weight: bold;
+      color: #4CAF50;
+    }
+    .grid-error {
+      min-height: 2em;
+      font-size: 15px;
+      color: #a00;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- 좌측 버튼 2개 -->
+  <div class="button-box">
+    <button class="btn-square" id="btn-calc" onclick="calc()">계산</button>
+    <button class="btn-square" id="btn-reset" onclick="reset()">결과</button>
   </div>
 
-  <div class="option-row">
-    <label for="gear-type">장비 종류</label>
-    <select id="gear-type" name="gear-type" onchange="resetplaceholder()">
-      <option id="gpurple" value="gpurple" style="color:HOTPINK; font-weight: bold;" selected>영웅</option>
-      <option id="gred" value="gred" style="color:RED; font-weight: bold;">전설</option>
-    </select>
+  <!-- 중앙: 옵션&입력 박스 -->
+  <div class="left-bigbox">
+    <!-- 고정 셀렉트 3종 -->
+    <div class="option-row">
+      <label for="gear-lv">장비 레벨</label>
+      <select id="gear-lv" onchange="resetplaceholder()">
+        <option value="lv85" selected>Lv85</option>
+        <option value="lv88">Lv88</option>
+        <option value="lv90r">Lv90 재련</option>
+      </select>
+    </div>
+    <div class="option-row">
+      <label for="gear-type">장비 종류</label>
+      <select id="gear-type" onchange="resetplaceholder()">
+        <option value="gpurple" selected>영웅</option>
+        <option value="gred">전설</option>
+      </select>
+    </div>
+    <div class="option-row">
+      <label for="gear-enc-lv">강화 구간</label>
+      <select id="gear-enc-lv" onchange="resetplaceholder()">
+        <option value="gear-lv0" selected>+0+1+2</option>
+        <option value="gear-lv3">+3+4+5</option>
+        <option value="gear-lv6">+6+7+8</option>
+        <option value="gear-lv9">+9+10+11</option>
+        <option value="gear-lv12">+12+13+14</option>
+        <option value="gear-lv15">+15</option>
+      </select>
+    </div>
+
+    <!-- 스탯 선택&입력(4칸) -->
+    <div class="option-row">
+      <label>스탯 선택 (최대 4개)</label>
+      <select class="stat-select" onchange="updateStatInputs()">
+        <option value="">--선택--</option>
+        <option value="atkper">공격력%</option>
+        <option value="defper">방어력%</option>
+        <option value="hpper">생명력%</option>
+        <option value="atkflat">공격력(고정)</option>
+        <option value="defflat">방어력(고정)</option>
+        <option value="hpflat">생명력(고정)</option>
+        <option value="critch">치명확률</option>
+        <option value="critdmg">치명피해</option>
+        <option value="spd">속도</option>
+        <option value="eff">효과적중</option>
+        <option value="res">효과저항</option>
+      </select>
+      <select class="stat-select" onchange="updateStatInputs()">
+        <option value="">--선택--</option>
+        <option value="atkper">공격력%</option>
+        <option value="defper">방어력%</option>
+        <option value="hpper">생명력%</option>
+        <option value="atkflat">공격력(고정)</option>
+        <option value="defflat">방어력(고정)</option>
+        <option value="hpflat">생명력(고정)</option>
+        <option value="critch">치명확률</option>
+        <option value="critdmg">치명피해</option>
+        <option value="spd">속도</option>
+        <option value="eff">효과적중</option>
+        <option value="res">효과저항</option>
+      </select>
+      <select class="stat-select" onchange="updateStatInputs()">
+        <option value="">--선택--</option>
+        <option value="atkper">공격력%</option>
+        <option value="defper">방어력%</option>
+        <option value="hpper">생명력%</option>
+        <option value="atkflat">공격력(고정)</option>
+        <option value="defflat">방어력(고정)</option>
+        <option value="hpflat">생명력(고정)</option>
+        <option value="critch">치명확률</option>
+        <option value="critdmg">치명피해</option>
+        <option value="spd">속도</option>
+        <option value="eff">효과적중</option>
+        <option value="res">효과저항</option>
+      </select>
+      <select class="stat-select" onchange="updateStatInputs()">
+        <option value="">--선택--</option>
+        <option value="atkper">공격력%</option>
+        <option value="defper">방어력%</option>
+        <option value="hpper">생명력%</option>
+        <option value="atkflat">공격력(고정)</option>
+        <option value="defflat">방어력(고정)</option>
+        <option value="hpflat">생명력(고정)</option>
+        <option value="critch">치명확률</option>
+        <option value="critdmg">치명피해</option>
+        <option value="spd">속도</option>
+        <option value="eff">효과적중</option>
+        <option value="res">효과저항</option>
+      </select>
+    </div>
+    <div id="dynamic-stat-inputs"></div>
+
   </div>
 
-  <div class="option-row">
-    <label for="gear-enc-lv">강화 구간</label>
-    <select id="gear-enc-lv" onchange="resetplaceholder()" name="gear-enc-lv">
-      <option id="g0" value="gear-lv0" selected>+0+1+2</option>
-      <option id="g3" value="gear-lv3">+3+4+5</option>
-      <option id="g6" value="gear-lv6">+6+7+8</option>
-      <option id="g9" value="gear-lv9">+9+10+11</option>
-      <option id="g12" value="gear-lv12">+12+13+14</option>
-      <option id="g15" value="gear-lv15">+15</option>
-    </select>
+  <!-- 우측 결과&점수 -->
+  <div class="right-bigbox">
+    <div>점수</div>
+    <div id="score">0</div>
+    <div>점수 백분율</div>
+    <div id="score-percentage">0%</div>
+    <div class="grid-error" id="errmsg"></div>
   </div>
-
-  <!-- 새로 추가: 스탯 선택 영역 -->
-  <div class="option-row">
-    <label for="stat-selects">스탯 선택 (최대 4개)</label>
-    <!-- 9개 스탯 중 최대4개 선택할 셀렉트 박스 4개 -->
-    <select class="stat-select" onchange="updateStatInputs()" >
-      <option value="">--선택--</option>
-      <option value="atkper">공격력%</option>
-      <option value="defper">방어력%</option>
-      <option value="hpper">생명력%</option>
-      <option value="atkflat">공격력 (고정)</option>
-      <option value="defflat">방어력 (고정)</option>
-      <option value="hpflat">생명력 (고정)</option>
-      <option value="critch">치명확률</option>
-      <option value="critdmg">치명피해</option>
-      <option value="spd">속도</option>
-      <option value="eff">효과적중</option>
-      <option value="res">효과저항</option>
-    </select>
-    <select class="stat-select" onchange="updateStatInputs()">
-      <option value="">--선택--</option>
-      <option value="atkper">공격력%</option>
-      <option value="defper">방어력%</option>
-      <option value="hpper">생명력%</option>
-      <option value="atkflat">공격력 (고정)</option>
-      <option value="defflat">방어력 (고정)</option>
-      <option value="hpflat">생명력 (고정)</option>
-      <option value="critch">치명확률</option>
-      <option value="critdmg">치명피해</option>
-      <option value="spd">속도</option>
-      <option value="eff">효과적중</option>
-      <option value="res">효과저항</option>
-    </select>
-    <select class="stat-select" onchange="updateStatInputs()">
-      <option value="">--선택--</option>
-      <option value="atkper">공격력%</option>
-      <option value="defper">방어력%</option>
-      <option value="hpper">생명력%</option>
-      <option value="atkflat">공격력 (고정)</option>
-      <option value="defflat">방어력 (고정)</option>
-      <option value="hpflat">생명력 (고정)</option>
-      <option value="critch">치명확률</option>
-      <option value="critdmg">치명피해</option>
-      <option value="spd">속도</option>
-      <option value="eff">효과적중</option>
-      <option value="res">효과저항</option>
-    </select>
-    <select class="stat-select" onchange="updateStatInputs()">
-      <option value="">--선택--</option>
-      <option value="atkper">공격력%</option>
-      <option value="defper">방어력%</option>
-      <option value="hpper">생명력%</option>
-      <option value="atkflat">공격력 (고정)</option>
-      <option value="defflat">방어력 (고정)</option>
-      <option value="hpflat">생명력 (고정)</option>
-      <option value="critch">치명확률</option>
-      <option value="critdmg">치명피해</option>
-      <option value="spd">속도</option>
-      <option value="eff">효과적중</option>
-      <option value="res">효과저항</option>
-    </select>
-  </div>
-
-  <!-- 스탯 입력칸들이 동적으로 생성될 영역 -->
-  <div id="dynamic-stat-inputs" style="margin-top: 12px;"></div>
 </div>
 
 <script>
-  // 스탯명 : 입력창 기본 속성들 (min, max, placeholder)
-  const statInfo = {
-    atkper: {label:"공격력%", min:0, max:48},
-    defper: {label:"방어력%", min:0, max:48},
-    hpper: {label:"생명력%", min:0, max:48},
-    atkflat: {label:"공격력 (고정)", min:0, max:282},
-    defflat: {label:"방어력 (고정)", min:0, max:198},
-    hpflat: {label:"생명력 (고정)", min:0, max:1200},
-    critch: {label:"치명확률", min:0, max:48},
-    critdmg: {label:"치명피해", min:0, max:48},
-    spd: {label:"속도", min:0, max:24},
-    eff: {label:"효과적중", min:0, max:48},
-    res: {label:"효과저항", min:0, max:48}
-  };
+const statInfo = {
+  atkper: {label:"공격력%", min:0, max:48},
+  defper: {label:"방어력%", min:0, max:48},
+  hpper: {label:"생명력%", min:0, max:48},
+  atkflat: {label:"공격력(고정)", min:0, max:282},
+  defflat: {label:"방어력(고정)", min:0, max:198},
+  hpflat: {label:"생명력(고정)", min:0, max:1200},
+  critch: {label:"치명확률", min:0, max:48},
+  critdmg: {label:"치명피해", min:0, max:48},
+  spd: {label:"속도", min:0, max:24},
+  eff: {label:"효과적중", min:0, max:48},
+  res: {label:"효과저항", min:0, max:48}
+};
 
-  function updateStatInputs() {
-    const selects = document.querySelectorAll('.stat-select');
-    const dynamicDiv = document.getElementById('dynamic-stat-inputs');
-    dynamicDiv.innerHTML = ''; // 초기화
+// 동적으로 스탯 입력창 생성
+function updateStatInputs() {
+  const selects = document.querySelectorAll('.stat-select');
+  const dynamicDiv = document.getElementById('dynamic-stat-inputs');
+  dynamicDiv.innerHTML = '';
+  let chosen = new Set();
+  selects.forEach(select => {
+    const val = select.value;
+    if (val && !chosen.has(val)) {
+      chosen.add(val);
+      const info = statInfo[val];
+      if (!info) return;
+      const div = document.createElement('div');
+      div.className = 'option-row';
+      const label = document.createElement('label');
+      label.htmlFor = val;
+      label.innerText = info.label;
+      div.appendChild(label);
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.id = val;
+      input.name = val;
+      input.min = info.min;
+      input.max = info.max;
+      input.placeholder = `0 ~ ${info.max}`;
+      div.appendChild(input);
+      dynamicDiv.appendChild(div);
+    }
+  });
+}
 
-    // 중복 스탯 선택 방지용 셋
-    let chosen = new Set();
+// 점수 계산/초기화 등은 네 기존 calc(), reset() 함수 그대로 사용하면 됨
+// 만약 스탯 값 JS에서 읽고 점수로 가공할 땐 
+//   document.getElementById('atkper')?.value (선택한 항목 있을 때만)
+// 이렇게 접근하면 됨
 
-    selects.forEach(select => {
-      const val = select.value;
-      if (val && !chosen.has(val)) {
-        chosen.add(val);
-        const info = statInfo[val];
-        if (!info) return; // 잘못된 값 무시
+document.addEventListener('DOMContentLoaded', updateStatInputs);
 
-        // 입력칸 div 생성
-        const div = document.createElement('div');
-        div.className = 'option-row';
+function resetplaceholder() {
+  // 필요하다면 여기서 select 옵션 바뀔 때 플레이스홀더 등 리셋로직 추가!
+}
 
-        // 라벨
-        const label = document.createElement('label');
-        label.htmlFor = val;
-        label.innerText = info.label;
-        div.appendChild(label);
-
-        // 입력칸
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.id = val;
-        input.min = info.min;
-        input.max = info.max;
-        input.placeholder = `0 ~ ${info.max}`;
-        div.appendChild(input);
-
-        dynamicDiv.appendChild(div);
+function calc() {
+  let selects = document.querySelectorAll('.stat-select');
+  let score = 0;
+  selects.forEach(sel => {
+    let stat = sel.value;
+    if (stat) {
+      let input = document.getElementById(stat);
+      if (input && input.value !== "") {
+        score += parseFloat(input.value);
       }
-    });
-  }
+    }
+  });
+  document.getElementById('score').innerText = score;
+  document.getElementById('score-percentage').innerText = (score > 0 ? Math.min(100, (score/100)*100).toFixed(0) : 0) + "%";
+  document.getElementById('errmsg').innerText = '';
+}
 
-  // 초기 로드 시 입력칸 생성
-  document.addEventListener('DOMContentLoaded', updateStatInputs);
+function reset() {
+  document.querySelectorAll('.stat-select').forEach(sel=>{sel.value = "";});
+  updateStatInputs();
+  document.getElementById('score').innerText = "0";
+  document.getElementById('score-percentage').innerText = "0%";
+  document.getElementById('errmsg').innerText = "";
+}
 </script>
+</body>
+</html>
